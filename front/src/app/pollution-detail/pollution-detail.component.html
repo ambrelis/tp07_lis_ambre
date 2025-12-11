@@ -1,0 +1,9 @@
+<div *ngIf="pollution" class="pollution-detail">
+  <h3>Détail de la pollution</h3>
+  <p><strong>Type :</strong> {{ pollution.type_pollution }}</p>
+  <p><strong>Date :</strong> {{ pollution.date_observation }}</p>
+  <p><strong>Description :</strong> {{ pollution.description || 'Aucune description' }}</p>
+</div>
+<div *ngIf="!pollution">
+  <p>Aucune pollution sélectionnée.</p>
+</div>

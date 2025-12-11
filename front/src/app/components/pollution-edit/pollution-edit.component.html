@@ -1,0 +1,20 @@
+<div *ngIf="pollution">
+  <h3>Modifier la pollution</h3>
+  <label>
+    Type:
+    <input [(ngModel)]="pollution.type_pollution" />
+  </label>
+  <label>
+    Date:
+    <input type="date" [(ngModel)]="pollution.date_observation" />
+  </label>
+  <label>
+    Description:
+    <input [(ngModel)]="pollution.description" />
+  </label>
+  <button (click)="saveChanges()">Enregistrer</button>
+</div>
+
+<div *ngIf="!pollution">
+  <p>Aucune pollution sélectionnée pour modification.</p>
+</div>

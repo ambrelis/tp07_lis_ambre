@@ -1,0 +1,31 @@
+<h2>Liste des pollutions</h2>
+
+<!-- filtres -->
+<div class="filters">
+  <h3>Filtres</h3>
+  <label>
+    Type :
+    <input type="text" [(ngModel)]="filter.type" (ngModelChange)="onFilterChange()"placeholder="Ex: Air, Eau..." />
+  </label>
+
+  <label>
+    Date :
+    <input type="date" [(ngModel)]="filter.date" (ngModelChange)="onFilterChange()"/>
+  </label>
+
+  <button (click)="clearFilters()">Réinitialiser</button>
+</div>
+
+
+<app-pollution-detail *ngIf="pollutionToView" [pollution]="pollutionToView"></app-pollution-detail>
+
+<ul>
+  <li *ngFor="let p of filteredPollutions">
+    {{ p.titre }} - Type: {{ p.type_pollution }} - Date: {{ p.date_observation }}
+    <button (click)="viewDetail(p)">Détail</button>
+    <button (click)="editPollution(p)">Modifier</button>
+    <button (click)="deletePollution(p.id)">Supprimer</button>
+  </li>
+</ul>
+
+<app-pollution-edit *ngIf="pollutionToEdit" [pollution]="pollutionToEdit"></app-pollution-edit>
