@@ -25,7 +25,12 @@
     <button (click)="viewDetail(p)">Détail</button>
     <button (click)="editPollution(p)">Modifier</button>
     <button (click)="deletePollution(p.id)">Supprimer</button>
+     <button (click)="toggleFav(p.id!)">
+      {{ isFavorite(p.id!) ? 'Retirer des favoris' : 'Ajouter aux favoris' }}
+    </button>
   </li>
 </ul>
 
 <app-pollution-edit *ngIf="pollutionToEdit" [pollution]="pollutionToEdit"></app-pollution-edit>
+
+

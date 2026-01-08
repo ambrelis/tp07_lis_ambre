@@ -1,0 +1,21 @@
+<h2>Mes favoris</h2>
+
+<div *ngIf="(favoritesCount$ | async) as count">
+  <p>Vous avez <strong>{{ count }}</strong> pollution(s) en favoris</p>
+</div>
+
+<div *ngIf="(favoritePollutions$ | async) as favorites">
+  <ul *ngIf="favorites.length > 0">
+    <li *ngFor="let p of favorites">
+      {{ p.titre }} - Type: {{ p.type_pollution }} - Date: {{ p.date_observation }}
+      
+      <button (click)="toggleFav(p.id!)">
+        {{ isFavorite(p.id!) ? 'Retirer des favoris' : 'Ajouter aux favoris' }}
+      </button>
+    </li>
+  </ul>
+
+  <p *ngIf="favorites.length === 0">
+    Vous n'avez aucun favori pour le moment.
+  </p>
+</div>

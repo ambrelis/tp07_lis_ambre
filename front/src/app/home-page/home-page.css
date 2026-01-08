@@ -1,0 +1,15 @@
+.titre1{
+  text-align: center;
+  margin-top: 100px;
+}
+
+.btn-global{
+  display: block;
+  margin: 15px auto 0;
+  color: white;
+  background-color: green;
+}
+.btn-global:disabled {
+  background-color: gray;
+  cursor: not-allowed;
+}
