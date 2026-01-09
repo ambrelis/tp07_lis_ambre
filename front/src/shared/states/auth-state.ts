@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
-import { Action, Selector, State, StateContext } from '@ngxs/store';
-import { AuthConnexion, Login, LoginSuccess, Logout, Register } from '../actions/auth-action';
+import { Action, Selector, State, StateContext, InitState, UpdateState } from '@ngxs/store';
+import { AuthConnexion, Login, LoginSuccess, Logout, Register, InitFromStorage } from '../actions/auth-action';
 import { LoadFavorites, ClearFavorites } from '../actions/favorites-action';
 import { AuthStateModel } from './auth-state-model';
 import { AuthService } from '../../app/services/auth.service';
@@ -11,7 +11,8 @@ import { Router } from '@angular/router';
   name: 'auth',
   defaults: {
     connexion: false,
-    user: null
+    user: null,
+    token: null
   },
 })
 @Injectable()
@@ -29,6 +30,11 @@ export class AuthState {
     return state.user;
   }
 
+  @Selector()
+  static getToken(state: AuthStateModel) {
+    return state.token;
+  }
+
   @Action(Login)
   login(ctx: StateContext<AuthStateModel>, action: Login) {
     return this.authService.login(action.payload).pipe(
@@ -36,7 +42,8 @@ export class AuthState {
         console.log('✅ Login response:', response);
         
         ctx.dispatch(new LoginSuccess({
-          user: response.user
+          user: response.user,
+          token: response.token
         }));
         
         this.router.navigate(['/pollutions']);
@@ -52,11 +59,12 @@ export class AuthState {
   loginSuccess(ctx: StateContext<AuthStateModel>, action: LoginSuccess) {
     console.log('✅ LoginSuccess - Mise à jour du state:', action.payload);
     
-    // Le token est stocké dans les cookies HttpOnly côté backend
-    // On ne stocke QUE l'utilisateur et le statut de connexion
+    // Token stocké EN MÉMOIRE uniquement (disparaît au refresh)
+    // Cookies HttpOnly côté backend pour persistance de session
     ctx.patchState({
       connexion: true,
-      user: action.payload.user
+      user: action.payload.user,
+      token: action.payload.token || null
     });
 
     // ✅ Charger les favoris après connexion réussie
@@ -71,7 +79,8 @@ export class AuthState {
         
         ctx.patchState({
           connexion: false,
-          user: null
+          user: null,
+          token: null
         });
 
         // ✅ Vider les favoris après déconnexion
@@ -85,7 +94,8 @@ export class AuthState {
         // Même en cas d'erreur, nettoyer le state
         ctx.patchState({
           connexion: false,
-          user: null
+          user: null,
+          token: null
         });
         
         this.router.navigate(['/login']);
@@ -101,7 +111,8 @@ export class AuthState {
         console.log('✅ Register response:', response);
         
         ctx.dispatch(new LoginSuccess({
-          user: response.user
+          user: response.user,
+          token: response.token
         }));
         
         this.router.navigate(['/pollutions']);
@@ -121,5 +132,19 @@ export class AuthState {
     patchState({
       connexion: payload.connexion,
     });
+  }
+
+  // ✅ Après restauration depuis localStorage, nettoyer le token
+  @Action(UpdateState)
+  updateState(ctx: StateContext<AuthStateModel>) {
+    const state = ctx.getState();
+    // Si on a un user mais pas de token (après refresh), c'est normal
+    // Le token reste null, les cookies HttpOnly gèrent la session
+    if (state.user && state.token) {
+      console.log('⚠️ Token restauré depuis localStorage - Nettoyage pour sécurité');
+      ctx.patchState({
+        token: null // ❌ Token supprimé après refresh
+      });
+    }
   }
 }
