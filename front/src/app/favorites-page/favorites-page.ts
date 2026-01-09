@@ -1,14 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { PollutionService, Pollution } from '../services/pollution.service';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { FavoritesState } from '../../shared/states/favorites-state';
-import { RemoveFavorite, AddFavorite } from '../../shared/actions/favorites-action';
+import { RemoveFavorite, AddFavorite, ClearFavorites } from '../../shared/actions/favorites-action';
 import { Observable, combineLatest, map } from 'rxjs';
 
 @Component({
   selector: 'app-favorites-page',
-  imports: [CommonModule],
+  standalone: true,
+  imports: [CommonModule, RouterLink],
   templateUrl: './favorites-page.html',
   styleUrls: ['./favorites-page.css']
 })
@@ -41,6 +43,12 @@ export class FavoritesPageComponent implements OnInit {
       this.store.dispatch(new RemoveFavorite(id.toString()));
     } else {
       this.store.dispatch(new AddFavorite(id.toString()));
+    }
+  }
+
+  clearAllFavorites(): void {
+    if (confirm('Êtes-vous sûr de vouloir supprimer tous vos favoris ?')) {
+      this.store.dispatch(new ClearFavorites());
     }
   }
 

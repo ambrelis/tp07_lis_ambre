@@ -1,11 +1,27 @@
 import { Routes } from '@angular/router';
 import { FavoritesPageComponent } from './favorites-page/favorites-page';
 import { HomePage } from './home-page/home-page';
+import { Login } from './login/login';
+import { Register } from './register/register';
+import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
-  { path: '', redirectTo: '/pollutions', pathMatch: 'full' },
+  { path: '', redirectTo: '/login', pathMatch: 'full' },
 
-  { path: 'pollutions', component: HomePage },
+  // Routes publiques
+  { path: 'login', component: Login },
+  { path: 'register', component: Register },
 
-  { path: 'favoris', component: FavoritesPageComponent },
+  // Routes protégées
+  { 
+    path: 'pollutions', 
+    component: HomePage,
+    canActivate: [authGuard]
+  },
+
+  { 
+    path: 'favoris', 
+    component: FavoritesPageComponent,
+    canActivate: [authGuard]
+  },
 ];

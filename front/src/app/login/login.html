@@ -1,6 +1,39 @@
-<!-- <input type="text" placeholder="Nom d'utilisateur" [(ngModel)]="username">
-<input type="password" placeholder="Mot de passe" [(ngModel)]="password">    -->
+<div class="login-container">
+  <h2>Connexion</h2>
+  
+  <form (ngSubmit)="login()">
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input 
+        type="email" 
+        id="email"
+        [(ngModel)]="email" 
+        name="email"
+        placeholder="votre@email.com"
+        required
+      />
+    </div>
 
-<button (click)="login()">Connexion</button>
-<button (click)="logout()">Se déconnecter</button>
-<p>Connexion : {{ connexion() ? 'Connecté' : 'Non connecté' }}</p>
+    <div class="form-group">
+      <label for="mot_de_passe">Mot de passe</label>
+      <input 
+        type="password" 
+        id="mot_de_passe"
+        [(ngModel)]="mot_de_passe" 
+        name="mot_de_passe"
+        placeholder="Votre mot de passe"
+        required
+      />
+    </div>
+
+    <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+    <button type="submit" [disabled]="loading">
+      {{ loading ? 'Connexion...' : 'Se connecter' }}
+    </button>
+
+    <p class="register-link">
+      Pas encore de compte ? <a routerLink="/register">S'inscrire</a>
+    </p>
+  </form>
+</div>

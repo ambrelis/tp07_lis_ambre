@@ -7,6 +7,10 @@ dist
 /bazel-out
 /client/.angular/cache
 
+front/.angular/
+front/node_modules/
+api/node_modules/
+
 # Node
 node_modules
 npm-debug.log

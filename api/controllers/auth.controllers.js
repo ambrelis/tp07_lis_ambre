@@ -100,6 +100,11 @@ exports.register = async (req, res) => {
   try {
     const { nom, prenom, email, mot_de_passe, telephone, organisation, role, adresse } = req.body;
 
+    // Validations essentielles uniquement
+    if (!nom || !prenom || !email || !mot_de_passe) {
+      return res.status(400).json({ message: "Nom, prénom, email et mot de passe sont requis" });
+    }
+
     // Vérifier si l'utilisateur existe déjà
     const existingUser = await Users.findOne({ where: { email } });
     if (existingUser) {
@@ -136,8 +141,12 @@ exports.register = async (req, res) => {
       { expiresIn: '24h' }
     );
 
+    // Ajouter le token dans le header Authorization pour l'intercepteur Angular
+    res.setHeader('Authorization', `Bearer ${token}`);
+
     res.status(201).json({
-      token,
+      success: true,
+      token: token,
       user: {
         id: newUser.id,
         nom: newUser.nom,

@@ -48,7 +48,7 @@ select {
 input:focus,
 select:focus {
   outline: none;
-  border-color: #007bff;
+  border-color: #28a745;
 }
 
 .error {

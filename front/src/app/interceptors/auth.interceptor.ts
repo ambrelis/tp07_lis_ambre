@@ -27,6 +27,26 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   
   // Envoyer la requête et gérer les erreurs
   return next(authReq).pipe(
+    // Intercepter la réponse pour capturer le token dans le header
+    tap((event) => {
+      if (event instanceof HttpResponse) {
+        const authHeader = event.headers.get('Authorization');
+        
+        // Si un token est présent dans le header Authorization
+        if (authHeader && authHeader.startsWith('Bearer ')) {
+          const token = authHeader.split(' ')[1];
+          
+          // Mettre à jour le state avec le nouveau token si user présent
+          const body = event.body as any;
+          if (body?.user) {
+            store.dispatch(new LoginSuccess({
+              token: token,
+              user: body.user
+            }));
+          }
+        }
+      }
+    }),
     catchError((error: HttpErrorResponse) => {
       
       // Erreur 401 - Token invalide ou expiré

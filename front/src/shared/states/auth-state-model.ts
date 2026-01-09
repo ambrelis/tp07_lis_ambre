@@ -1,4 +1,5 @@
-import { Auth } from '../models/auth';
 export interface AuthStateModel {
-  connexion: Boolean;
+  connexion: boolean;
+  token: string | null;
+  user: any | null;
 }

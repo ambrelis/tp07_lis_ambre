@@ -2,14 +2,17 @@ import { Auth } from '../models/auth';
 
 export class AuthConnexion {
   static readonly type = '[Auth] Connexion';
-
   constructor(public payload: Auth) {}
+}
+
+export class Login {
+  static readonly type = '[Auth] Login';
+  constructor(public payload: { email: string; mot_de_passe: string }) {}
 }
 
 export class LoginSuccess {
   static readonly type = '[Auth] Login Success';
-
-  constructor(public payload: { connexion: boolean }) {}
+  constructor(public payload: { token: string; user: any }) {}
 }
 
 export class Logout {
@@ -18,6 +21,5 @@ export class Logout {
 
 export class Register {
   static readonly type = '[Auth] Register';
-
   constructor(public payload: any) {}
 }

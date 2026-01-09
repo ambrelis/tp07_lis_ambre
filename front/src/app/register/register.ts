@@ -22,10 +22,6 @@ export class Register {
   email = '';
   mot_de_passe = '';
   confirmPassword = '';
-  telephone = '';
-  organisation = '';
-  role: 'citoyen' | 'entreprise' | 'admin' = 'citoyen';
-  adresse = '';
   
   errorMessage = '';
   loading = false;
@@ -34,6 +30,11 @@ export class Register {
     this.errorMessage = '';
 
     // Validation
+    if (!this.nom || !this.prenom || !this.email || !this.mot_de_passe) {
+      this.errorMessage = 'Tous les champs sont requis';
+      return;
+    }
+
     if (this.mot_de_passe !== this.confirmPassword) {
       this.errorMessage = 'Les mots de passe ne correspondent pas';
       return;
@@ -50,11 +51,7 @@ export class Register {
       nom: this.nom,
       prenom: this.prenom,
       email: this.email,
-      mot_de_passe: this.mot_de_passe,
-      telephone: this.telephone || undefined,
-      organisation: this.organisation || undefined,
-      role: this.role,
-      adresse: this.adresse || undefined
+      mot_de_passe: this.mot_de_passe
     })).subscribe({
       next: () => {
         const isLoggedIn = this.store.selectSnapshot(AuthState.isConnected);
