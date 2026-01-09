@@ -4,13 +4,21 @@ const cookieParser = require("cookie-parser");
 
 const app  = express ();
 
+// Configuration selon l'environnement
+const isProduction = process.env.NODE_ENV === 'production';
+
 var corsOptions = {
-  origin: "http://localhost:4200",
+  origin: isProduction 
+    ? process.env.FRONTEND_URL || 'https://tp07-lis-ambre.onrender.com'
+    : 'http://localhost:4200',
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization'],
   exposedHeaders: ['Authorization']
 };
+
+console.log('🌍 CORS Origin:', corsOptions.origin);
+console.log('🔧 Environment:', isProduction ? 'PRODUCTION' : 'DEVELOPMENT');
 
 app.use(cors(corsOptions));
 app.use(cookieParser());
@@ -39,8 +47,9 @@ db.sequelize.sync({ alter: true })
 require("./routes")(app);
 
 // set port, listen for requests
-const PORT =  3000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}.`);
+  console.log(`🚀 Server is running on port ${PORT}.`);
+  console.log(`📡 Environment: ${process.env.NODE_ENV || 'development'}`);
 });
 

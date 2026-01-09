@@ -12,11 +12,14 @@ module.exports = app => {
   // POST /api/favorites - Ajouter un favori
   router.post("/", authenticateToken, favorites.addFavorite);
 
-  // DELETE /api/favorites/:pollutionId - Retirer un favori
-  router.delete("/:pollutionId", authenticateToken, favorites.removeFavorite);
-
+  // ⚠️ IMPORTANT : /clear DOIT être AVANT /:pollutionId
+  // Sinon "clear" sera interprété comme un pollutionId
+  
   // DELETE /api/favorites/clear - Supprimer tous les favoris
   router.delete("/clear", authenticateToken, favorites.clearFavorites);
+
+  // DELETE /api/favorites/:pollutionId - Retirer un favori
+  router.delete("/:pollutionId", authenticateToken, favorites.removeFavorite);
 
   app.use('/api/favorites', router);
 };

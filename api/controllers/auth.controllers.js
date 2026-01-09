@@ -53,19 +53,22 @@ exports.login = async (req, res) => {
       { expiresIn: REFRESH_EXPIRES_IN }
     );
 
+    // Configuration selon l'environnement
+    const isProduction = process.env.NODE_ENV === 'production';
+
     // Envoyer les tokens dans des cookies HttpOnly sécurisés
     res.cookie('accessToken', token, {
       httpOnly: true,
-      secure: false, // false en développement pour http://localhost
-      sameSite: 'lax',
+      secure: isProduction, // true en production (HTTPS)
+      sameSite: isProduction ? 'none' : 'lax', // 'none' en production pour cross-origin
       maxAge: 24 * 60 * 60 * 1000,
       path: '/'
     });
 
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
-      secure: false,
-      sameSite: 'lax',
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'lax',
       maxAge: 7 * 24 * 60 * 60 * 1000,
       path: '/'
     });
