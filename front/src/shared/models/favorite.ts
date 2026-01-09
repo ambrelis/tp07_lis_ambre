@@ -1,4 +1,7 @@
 export interface Favorite {
-  pollutionId: string;
-  addedAt: Date;
+  id: number;
+  user_id: number;
+  pollution_id: number;
+  added_at: Date;
+  pollution?: any;
 }

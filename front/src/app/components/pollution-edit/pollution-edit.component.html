@@ -1,6 +1,14 @@
 <div *ngIf="pollution">
   <h3>Modifier la pollution</h3>
   <label>
+    Titre:
+    <input [(ngModel)]="pollution.titre" />
+  </label>
+  <label>
+    Lieu:
+    <input [(ngModel)]="pollution.lieu" />
+  </label>
+  <label>
     Type:
     <input [(ngModel)]="pollution.type_pollution" />
   </label>

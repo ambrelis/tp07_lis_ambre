@@ -25,7 +25,7 @@ bootstrapApplication(AppComponent, {
         developmentMode: !environment.production
       }),
       NgxsStoragePluginModule.forRoot({
-        keys: ['auth', 'favorites']
+        keys: ['auth'] // ✅ Ne plus persister 'favorites' en localStorage
       })
     ),
     provideRouter(routes)

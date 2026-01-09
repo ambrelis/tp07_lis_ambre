@@ -41,6 +41,9 @@ module.exports = (sequelize, Sequelize) => {
       },
       onDelete: "CASCADE"
     }
+  }, {
+    tableName: 'pollution',
+    timestamps: false
   });
   
 

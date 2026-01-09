@@ -29,9 +29,8 @@ export class PollutionFavoritesComponent implements OnInit {
 
     this.favoritePollutions$ = combineLatest([favoriteIds$, allPollutions$]).pipe(
       map(([ids, pollutions]) => {
-        // Vérification de sécurité : s'assurer que ids est bien un tableau
         const favIds = Array.isArray(ids) ? ids : [];
-        return pollutions.filter(p => p.id && favIds.includes(p.id.toString()));
+        return pollutions.filter(p => p.id && favIds.includes(p.id));
       })
     );
 
@@ -39,7 +38,7 @@ export class PollutionFavoritesComponent implements OnInit {
   }
 
   removeFavorite(pollutionId: number) {
-    this.store.dispatch(new RemoveFavorite(pollutionId.toString()));
+    this.store.dispatch(new RemoveFavorite(pollutionId));
   }
 
   clearAllFavorites() {

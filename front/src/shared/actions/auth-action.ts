@@ -12,7 +12,7 @@ export class Login {
 
 export class LoginSuccess {
   static readonly type = '[Auth] Login Success';
-  constructor(public payload: { token: string; user: any }) {}
+  constructor(public payload: { user: any }) {}
 }
 
 export class Logout {

@@ -26,16 +26,14 @@ export class UserService {
   private usersSubject = new BehaviorSubject<User[]>([]);
   users$ = this.usersSubject.asObservable();
 
-  constructor(private http: HttpClient) {
-    this.loadUsers();
-  }
+  constructor(private http: HttpClient) {}
 
-  private loadUsers(): void {
-  this.http.get<User[]>(this.apiUrl).subscribe({
-    next: data => this.usersSubject.next(data),
-    error: err => console.error('Erreur chargement utilisateurs', err)
-  });
-}
+  loadUsers(): void {
+    this.http.get<User[]>(this.apiUrl).subscribe({
+      next: data => this.usersSubject.next(data),
+      error: err => console.error('Erreur chargement utilisateurs', err)
+    });
+  }
 
   // ➕ Créer un utilisateur
   createUser(user: User): Observable<User> {

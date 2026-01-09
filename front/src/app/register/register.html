@@ -41,6 +41,20 @@
     </div>
 
     <div class="form-group">
+      <label for="role">Rôle *</label>
+      <select 
+        id="role"
+        [(ngModel)]="role" 
+        name="role"
+        required
+      >
+        <option value="citoyen">Citoyen</option>
+        <option value="entreprise">Entreprise</option>
+        <option value="admin">Administrateur</option>
+      </select>
+    </div>
+
+    <div class="form-group">
       <label for="mot_de_passe">Mot de passe *</label>
       <input 
         type="password" 

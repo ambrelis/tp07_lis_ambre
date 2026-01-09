@@ -1,5 +1,6 @@
-import { Favorite } from '../models/favorite';
+import { FavoriteResponse } from '../../app/services/favorites.service';
 
 export interface FavoritesStateModel {
-  favorites: Favorite[];
+  favorites: FavoriteResponse[];
+  loaded: boolean;
 }

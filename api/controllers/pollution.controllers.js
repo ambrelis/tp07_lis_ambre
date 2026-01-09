@@ -41,7 +41,19 @@ exports.getById = async (req, res) => {
 // POST créer une pollution
 exports.create = async (req, res) => {
     try {
-        const newPollution = await Pollution.create(req.body);
+        // Récupérer l'utilisateur depuis le token JWT (ajouté par authenticateToken middleware)
+        const userId = req.user?.id;
+        
+        if (!userId) {
+            return res.status(401).json({ message: "Utilisateur non authentifié" });
+        }
+        
+        // Créer la pollution en associant l'utilisateur connecté
+        const newPollution = await Pollution.create({
+            ...req.body,
+            user_id: userId // Assigner automatiquement l'utilisateur connecté
+        });
+        
         res.status(201).json(newPollution);
     } catch (err) {
         res.status(400).json({ message: err.message });

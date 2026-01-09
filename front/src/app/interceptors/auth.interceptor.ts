@@ -10,48 +10,31 @@ import { LoginSuccess, Logout } from '../../shared/actions/auth-action';
  * Interceptor HTTP pour l'authentification via cookies HttpOnly
  * 
  * Fonctionnalités:
- * 1. Ajoute withCredentials: true pour envoyer les cookies automatiquement
- * 2. Les cookies HttpOnly sont automatiquement envoyés/reçus par le navigateur
+ * 1. Ajoute withCredentials: true pour envoyer/recevoir les cookies automatiquement
+ * 2. Les cookies HttpOnly (accessToken, refreshToken) sont gérés par le navigateur
  * 3. Gère les erreurs 401 (Unauthorized) et redirige vers login
  * 4. Gère les erreurs 403 (Forbidden)
+ * 
+ * ⚠️ Le token JWT n'est PAS stocké côté client (plus sécurisé)
+ * ⚠️ Le token est dans un cookie HttpOnly inaccessible en JavaScript
  */
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
   const store = inject(Store);
 
   // Cloner la requête pour ajouter withCredentials: true
-  // Cela permet d'envoyer et recevoir les cookies HttpOnly
+  // Cela permet d'envoyer et recevoir les cookies HttpOnly automatiquement
   const authReq = req.clone({
     withCredentials: true
   });
   
   // Envoyer la requête et gérer les erreurs
   return next(authReq).pipe(
-    // Intercepter la réponse pour capturer le token dans le header
-    tap((event) => {
-      if (event instanceof HttpResponse) {
-        const authHeader = event.headers.get('Authorization');
-        
-        // Si un token est présent dans le header Authorization
-        if (authHeader && authHeader.startsWith('Bearer ')) {
-          const token = authHeader.split(' ')[1];
-          
-          // Mettre à jour le state avec le nouveau token si user présent
-          const body = event.body as any;
-          if (body?.user) {
-            store.dispatch(new LoginSuccess({
-              token: token,
-              user: body.user
-            }));
-          }
-        }
-      }
-    }),
     catchError((error: HttpErrorResponse) => {
       
-      // Erreur 401 - Token invalide ou expiré
+      // Erreur 401 - Cookie invalide ou expiré
       if (error.status === 401) {
-        console.warn('Token invalide ou expiré. Déconnexion...');
+        console.warn('⚠️ Cookie invalide ou expiré. Déconnexion...');
         
         // Déconnecter l'utilisateur
         store.dispatch(new Logout());

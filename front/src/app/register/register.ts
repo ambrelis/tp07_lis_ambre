@@ -22,6 +22,7 @@ export class Register {
   email = '';
   mot_de_passe = '';
   confirmPassword = '';
+  role: 'citoyen' | 'entreprise' | 'admin' = 'citoyen';
   
   errorMessage = '';
   loading = false;
@@ -51,7 +52,8 @@ export class Register {
       nom: this.nom,
       prenom: this.prenom,
       email: this.email,
-      mot_de_passe: this.mot_de_passe
+      mot_de_passe: this.mot_de_passe,
+      role: this.role
     })).subscribe({
       next: () => {
         const isLoggedIn = this.store.selectSnapshot(AuthState.isConnected);

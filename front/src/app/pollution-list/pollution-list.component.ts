@@ -89,16 +89,16 @@ export class PollutionListComponent implements OnInit {
   }
 
   toggleFav(id: number) {
-    const isFav = this.store.selectSnapshot(FavoritesState.isFavorite)(id.toString());
+    const isFav = this.store.selectSnapshot(FavoritesState.isFavorite)(id);
     if (isFav) {
-      this.store.dispatch(new RemoveFavorite(id.toString()));
+      this.store.dispatch(new RemoveFavorite(id));
     } else {
-      this.store.dispatch(new AddFavorite(id.toString()));
+      this.store.dispatch(new AddFavorite(id));
     }
   }
 
   isFavorite(id: number): boolean {
-    return this.store.selectSnapshot(FavoritesState.isFavorite)(id.toString());
+    return this.store.selectSnapshot(FavoritesState.isFavorite)(id);
   }
 
   

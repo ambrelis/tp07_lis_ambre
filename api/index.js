@@ -28,12 +28,12 @@ app.get("/", (req, res) => {
 
 const db = require("./models");
 
-db.sequelize.sync()
+db.sequelize.sync({ alter: true })
   .then(() => {
-    console.log("Synced db.");
+    console.log("✅ Base de données synchronisée (alter mode)");
   })
   .catch((err) => {
-    console.log("Failed to sync db: " + err.message);
+    console.log("❌ Failed to sync db: " + err.message);
   });
 
 require("./routes")(app);

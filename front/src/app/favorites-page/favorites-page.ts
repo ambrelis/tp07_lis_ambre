@@ -1,16 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { PollutionService, Pollution } from '../services/pollution.service';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { FavoritesState } from '../../shared/states/favorites-state';
 import { RemoveFavorite, AddFavorite, ClearFavorites } from '../../shared/actions/favorites-action';
-import { Observable, combineLatest, map } from 'rxjs';
+import { Observable, map } from 'rxjs';
+import { Pollution } from '../services/pollution.service';
 
 @Component({
   selector: 'app-favorites-page',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule],
   templateUrl: './favorites-page.html',
   styleUrls: ['./favorites-page.css']
 })
@@ -19,30 +18,24 @@ export class FavoritesPageComponent implements OnInit {
   favoritesCount$!: Observable<number>;
 
   constructor(
-    private pollutionService: PollutionService,
     private store: Store
   ) {}
 
   ngOnInit(): void {
-    const favoriteIds$ = this.store.select(FavoritesState.getFavoriteIds);
-    const allPollutions$ = this.pollutionService.getPollutions();
-
-    this.favoritePollutions$ = combineLatest([favoriteIds$, allPollutions$]).pipe(
-      map(([ids, pollutions]) => {
-        const favIds = Array.isArray(ids) ? ids : [];
-        return pollutions.filter(p => p.id && favIds.includes(p.id.toString()));
-      })
+    // Les favoris de l'API contiennent déjà les pollutions incluses
+    this.favoritePollutions$ = this.store.select(FavoritesState.getFavorites).pipe(
+      map(favorites => favorites.map(f => f.pollution).filter(p => p != null))
     );
 
     this.favoritesCount$ = this.store.select(FavoritesState.getFavoritesCount);
   }
 
   toggleFav(id: number): void {
-    const isFav = this.store.selectSnapshot(FavoritesState.isFavorite)(id.toString());
+    const isFav = this.store.selectSnapshot(FavoritesState.isFavorite)(id);
     if (isFav) {
-      this.store.dispatch(new RemoveFavorite(id.toString()));
+      this.store.dispatch(new RemoveFavorite(id));
     } else {
-      this.store.dispatch(new AddFavorite(id.toString()));
+      this.store.dispatch(new AddFavorite(id));
     }
   }
 
@@ -53,6 +46,6 @@ export class FavoritesPageComponent implements OnInit {
   }
 
   isFavorite(id: number): boolean {
-    return this.store.selectSnapshot(FavoritesState.isFavorite)(id.toString());
+    return this.store.selectSnapshot(FavoritesState.isFavorite)(id);
   }
 }

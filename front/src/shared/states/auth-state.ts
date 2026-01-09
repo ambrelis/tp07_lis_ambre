@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Action, Selector, State, StateContext } from '@ngxs/store';
 import { AuthConnexion, Login, LoginSuccess, Logout, Register } from '../actions/auth-action';
+import { LoadFavorites, ClearFavorites } from '../actions/favorites-action';
 import { AuthStateModel } from './auth-state-model';
 import { AuthService } from '../../app/services/auth.service';
 import { tap, catchError } from 'rxjs';
@@ -10,7 +11,6 @@ import { Router } from '@angular/router';
   name: 'auth',
   defaults: {
     connexion: false,
-    token: null,
     user: null
   },
 })
@@ -25,11 +25,6 @@ export class AuthState {
   }
 
   @Selector()
-  static getToken(state: AuthStateModel) {
-    return state.token;
-  }
-
-  @Selector()
   static getUser(state: AuthStateModel) {
     return state.user;
   }
@@ -41,7 +36,6 @@ export class AuthState {
         console.log('✅ Login response:', response);
         
         ctx.dispatch(new LoginSuccess({
-          token: response.token,
           user: response.user
         }));
         
@@ -58,24 +52,30 @@ export class AuthState {
   loginSuccess(ctx: StateContext<AuthStateModel>, action: LoginSuccess) {
     console.log('✅ LoginSuccess - Mise à jour du state:', action.payload);
     
+    // Le token est stocké dans les cookies HttpOnly côté backend
+    // On ne stocke QUE l'utilisateur et le statut de connexion
     ctx.patchState({
       connexion: true,
-      token: action.payload.token,
       user: action.payload.user
     });
+
+    // ✅ Charger les favoris après connexion réussie
+    ctx.dispatch(new LoadFavorites());
   }
 
   @Action(Logout)
   logout(ctx: StateContext<AuthStateModel>) {
     return this.authService.logout().pipe(
       tap(() => {
-        console.log('✅ Déconnexion réussie');
+        console.log('✅ Déconnexion réussie - Cookies supprimés côté backend');
         
         ctx.patchState({
           connexion: false,
-          token: null,
           user: null
         });
+
+        // ✅ Vider les favoris après déconnexion
+        ctx.dispatch(new ClearFavorites());
         
         this.router.navigate(['/login']);
       }),
@@ -85,7 +85,6 @@ export class AuthState {
         // Même en cas d'erreur, nettoyer le state
         ctx.patchState({
           connexion: false,
-          token: null,
           user: null
         });
         
@@ -102,7 +101,6 @@ export class AuthState {
         console.log('✅ Register response:', response);
         
         ctx.dispatch(new LoginSuccess({
-          token: response.token,
           user: response.user
         }));
         
