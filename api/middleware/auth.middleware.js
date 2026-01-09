@@ -9,18 +9,23 @@ const SECRET_KEY = config.JWT_SECRET;
  */
 const authenticateToken = (req, res, next) => {
   try {
-    console.log('🔐 Auth middleware - Cookies:', req.cookies);
     console.log('🔐 Auth middleware - Headers:', req.headers['authorization']);
+    console.log('🔐 Auth middleware - Cookies:', req.cookies);
     
-    // 1. Récupérer le token depuis le cookie (prioritaire) ou le header Authorization (fallback)
-    let token = req.cookies?.accessToken;
+    // 1. Récupérer le token depuis le header Authorization (prioritaire) ou le cookie (fallback)
+    let token = null;
     
-    // Fallback: si pas de cookie, vérifier le header Authorization (pour compatibilité)
-    if (!token) {
-      const authHeader = req.headers['authorization'];
-      if (authHeader && authHeader.startsWith('Bearer ')) {
-        token = authHeader.split(' ')[1];
-      }
+    // Priorité 1: Vérifier le header Authorization
+    const authHeader = req.headers['authorization'];
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      token = authHeader.split(' ')[1];
+      console.log('🔐 Token trouvé dans le header Authorization');
+    }
+    
+    // Fallback: si pas de header, vérifier le cookie
+    if (!token && req.cookies?.accessToken) {
+      token = req.cookies.accessToken;
+      console.log('🔐 Token trouvé dans le cookie');
     }
     
     console.log('🔐 Token found:', token ? 'YES' : 'NO');

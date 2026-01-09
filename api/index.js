@@ -7,18 +7,36 @@ const app  = express ();
 // Configuration selon l'environnement
 const isProduction = process.env.NODE_ENV === 'production';
 
+// Liste des origines autorisées
+const allowedOrigins = [
+  'http://localhost:4200', // Développement local
+  'https://tp07-lis-ambre.onrender.com', // Frontend production (à modifier)
+  process.env.FRONTEND_URL // URL configurée via variable d'environnement
+].filter(Boolean); // Enlever les valeurs undefined
+
 var corsOptions = {
-  origin: isProduction 
-    ? process.env.FRONTEND_URL || 'https://tp07-lis-ambre.onrender.com'
-    : 'http://localhost:4200',
+  origin: function (origin, callback) {
+    console.log('🌍 Origin de la requête:', origin);
+    // Autoriser les requêtes sans origin (ex: Postman, curl)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      console.log('✅ Origin autorisée:', origin);
+      callback(null, true);
+    } else {
+      console.error('❌ Origin BLOQUÉE:', origin);
+      console.log('📋 Origins autorisées:', allowedOrigins);
+      callback(new Error('Non autorisé par CORS'));
+    }
+  },
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization'],
   exposedHeaders: ['Authorization']
 };
 
-console.log('🌍 CORS Origin:', corsOptions.origin);
 console.log('🔧 Environment:', isProduction ? 'PRODUCTION' : 'DEVELOPMENT');
+console.log('📋 CORS - Origins autorisées:', allowedOrigins);
 
 app.use(cors(corsOptions));
 app.use(cookieParser());
